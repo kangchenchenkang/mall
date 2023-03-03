@@ -21,11 +21,12 @@ public class WalletController {
 
 
     /**
-     * 查询余额
+     * 查询记录
      * @return
      */
     @GetMapping("details")
     public R detail(){
+        // 省略分页
         return R.ok(walletService.balanceDetail());
     }
 
