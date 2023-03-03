@@ -86,6 +86,7 @@ public class WalletServiceImpl extends ServiceImpl<WalletMapper, WalletEntity> i
 
     @Override
     public List<WalletRecordsVo> balanceDetail() {
+        // 省略分页
         return walletRecordsService.getRecords();
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
