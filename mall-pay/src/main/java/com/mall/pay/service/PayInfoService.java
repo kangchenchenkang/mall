@@ -8,4 +8,10 @@ import com.mall.pay.entity.PayInfoEntity;
  * @create 2023-03-02 22:21
  */
 public interface PayInfoService  extends IService<PayInfoEntity> {
+    /**
+     *
+     * @param tradeNo 条件
+     * @return
+     */
+    PayInfoEntity getByTradeNo(String tradeNo);
 }

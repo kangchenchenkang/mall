@@ -29,7 +29,7 @@ public class OrderEntity {
     /**
      * 支付平台订单id
      */
-    private String payId;
+    private String tradeNo;
 
     /**
      * 支付类型{@link com.mall.pay.constant.PaymentConstant}

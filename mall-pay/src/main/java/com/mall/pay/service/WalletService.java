@@ -22,9 +22,9 @@ public interface WalletService extends IService<WalletEntity> {
 
     /**
      * 退
-     * @param payId
+     * @param tradeNo 支付id
      */
-    void refund(Long payId) throws NoPermissionException;
+    void refund(String tradeNo) throws NoPermissionException;
 
     /**
      * 查询余额
@@ -39,4 +39,17 @@ public interface WalletService extends IService<WalletEntity> {
      */
     List<WalletRecordsVo> balanceDetail();
 
+    /**
+     * 回调监听
+     * @param tradeNo
+     * @return
+     */
+    String callbackRefund(String tradeNo);
+
+    /**
+     *
+     * @param walletDTO
+     * @return
+     */
+    String callbackRecharge(WalletDTO walletDTO);
 }

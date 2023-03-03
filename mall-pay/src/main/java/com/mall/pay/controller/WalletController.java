@@ -1,5 +1,6 @@
 package com.mall.pay.controller;
 
+import com.mall.pay.dto.WalletDTO;
 import com.mall.pay.service.WalletService;
 import com.mall.pay.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,8 @@ public class WalletController {
      * @return
      */
     @PutMapping("refund")
-    public R refund(@RequestBody Long payId) throws NoPermissionException {
-        walletService.refund(payId);
+    public R refund(@RequestBody String tradeNo) throws NoPermissionException {
+        walletService.refund(tradeNo);
         return R.ok();
     }
     /**
@@ -51,7 +52,11 @@ public class WalletController {
      * @return
      */
     @PutMapping("recharge")
-    public R recharge(){
+    public R recharge(@RequestBody  WalletDTO walletDTO){
+
+        // 保存订单信息,设置状态为未支付,之后具体看回调接口WalletListener
+        // 五分钟之后判断是否支付成功,还没有支付关闭订单
+        walletService.recharge(walletDTO);
         return R.ok();
     }
 }

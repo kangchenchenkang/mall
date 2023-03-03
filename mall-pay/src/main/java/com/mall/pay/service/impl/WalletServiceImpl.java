@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall.pay.constant.ConsumerConstant;
+import com.mall.pay.constant.OrderConstant;
 import com.mall.pay.constant.PaymentConstant;
 import com.mall.pay.dto.WalletDTO;
 import com.mall.pay.entity.PayInfoEntity;
@@ -41,12 +42,14 @@ public class WalletServiceImpl extends ServiceImpl<WalletMapper, WalletEntity> i
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     @Override
     public void recharge(WalletDTO walletDTO) {
-        WalletEntity walletEntity = new WalletEntity();
-        LambdaUpdateWrapper<WalletEntity> updateWrapper = Wrappers.<WalletEntity>lambdaUpdate()
-                .setSql("balance +=" + walletDTO.getAmount())
-                .eq(WalletEntity::getUserId,walletDTO.getUserId());
-        // update table_name set balance += amount where user_id = user_id and dr = 0
-        baseMapper.update(walletEntity,updateWrapper);
+        PayInfoEntity payInfoEntity = PayInfoEntity.builder()
+                .totalAmount(walletDTO.getAmount())
+                // 设置状态为未支付
+                .status(OrderConstant.UNPAID.getType())
+                //省略 ...
+                //.tradeNo() ...
+                .build();
+        payInfoService.save(payInfoEntity);
         // 创建记录
         // 设置支付对象
         WalletRecordsEntity walletRecordsEntity = WalletRecordsEntity.builder()
@@ -57,19 +60,21 @@ public class WalletServiceImpl extends ServiceImpl<WalletMapper, WalletEntity> i
     }
 
     @Override
-    public void refund(Long payId) throws NoPermissionException {
+    public void refund(String tradeNo) throws NoPermissionException {
         // 从ThreadLocal 获取用户id
         UserEntity userEntity = UserHolder.get();
-        // 如果payId不是当前用户能操作的
+        // 判断tradeNo对应的用是不是当前用户的
         PayInfoEntity payInfoEntity = payInfoService.getById(userEntity.getId());
+        Assert.notNull(payInfoEntity,"不存在的流水号");
         // 对用户进行处理等
-        PayInfoEntity payInfo = payInfoService.getById(payId);
+        PayInfoEntity payInfo = payInfoService.getByTradeNo(tradeNo);
         Assert.isTrue(payInfoEntity.getId().equals(payInfo.getUserId()),
                 ()-> new NoPermissionException("你无权对别的用户进行操作,频繁操作进行封号处理"));
-        Integer type = payInfo.getType();
-
-        // 根据支付类型使用策略等设计模式获取对应的SDK实现
-        // 调用sdk进行退款
+        Integer status = payInfo.getStatus();
+        // 只有支付成功的状态才能退款
+        Assert.isTrue(OrderConstant.SUCCESS.equals(status),"支付失败不能退款");
+        // 根据支付类型使用策略等设计模式获取对应的SDK封装的实现
+        // 调用sdk进行退款,不做任何修改在回调接口修改
 
     }
 
@@ -82,5 +87,39 @@ public class WalletServiceImpl extends ServiceImpl<WalletMapper, WalletEntity> i
     @Override
     public List<WalletRecordsVo> balanceDetail() {
         return walletRecordsService.getRecords();
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    @Override
+    public String callbackRefund(String tradeNo) {
+        PayInfoEntity payInfoEntity = payInfoService.getByTradeNo(tradeNo);
+        Assert.notNull(payInfoEntity,"不存在的流水号");
+        // 修改订单状态
+        payInfoService.update(Wrappers.<PayInfoEntity>lambdaUpdate()
+                        .eq(PayInfoEntity::getId,payInfoEntity.getId())
+                .set(PayInfoEntity::getStatus,OrderConstant.REFUND.getType()));
+        // todo 记录退款
+        //walletRecordsService
+        // 如果支付方式是钱包,修改钱包,金额从回调里获取
+        /*baseMapper.update(Wrappers.<WalletEntity>lambdaUpdate()
+                .setSql("balance +-=" amount))
+                .where()
+
+         */
+        // 返回给微信支付宝收到通知
+        return "success";
+    }
+
+    @Override
+    public String callbackRecharge(WalletDTO walletDTO) {
+        // 省略查询钱包
+        WalletEntity walletEntity = new WalletEntity();
+        LambdaUpdateWrapper<WalletEntity> updateWrapper = Wrappers.<WalletEntity>lambdaUpdate()
+                .setSql("balance +=" + walletDTO.getAmount())
+                .eq(WalletEntity::getUserId,walletDTO.getUserId());
+        // update table_name set balance += amount where user_id = user_id and dr = 0
+        baseMapper.update(walletEntity,updateWrapper);
+        // 修改记录
+        // 返回给微信支付宝收到通知
+        return "success";
     }
 }

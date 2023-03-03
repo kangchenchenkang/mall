@@ -26,13 +26,13 @@ public class WalletListener {
      */
     @PostMapping("recharge")
     public String recharge(){
-
+        // 支付宝微信等会进行最大努力通知,进行幂等性判断,getByTradeNo查询是否有充值记录
         // 进行非对称加密验签
         // 充值成功进行修改钱包
-        // 解密获取对象,省略
-        WalletDTO walletDTO = WalletDTO.builder().userId(IdWorker.getId()).amount(BigDecimal.valueOf(10)).build();
-        walletService.recharge(walletDTO);
-        return "success";
+        // 根据订单编号查询订单,得到对应订单的钱包信息,省略...
+        WalletDTO walletDTO = WalletDTO.builder().build();
+        // 返回处理微信支付通知成功
+        return  walletService.callbackRecharge(walletDTO);
     }
 
     /**
@@ -41,12 +41,11 @@ public class WalletListener {
      */
     @PostMapping("recharge")
     public String refund(){
-
+        // 支付宝微信等会进行最大努力通知,进行幂等性判断查询是否有退款记录
         // 进行非对称加密验签
-        // 退款成功进行修改钱包
-        // 解密获取对象,省略
+        // 退款成功修改钱包
 
-        // 变更状态跟这次支付相关的信息
-        return "success";
+        // 返回处理微信支付通知成功
+        return  walletService.callbackRefund("tradeNo等信息");
     }
 }
