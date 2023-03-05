@@ -73,7 +73,7 @@ public class WalletServiceImpl extends ServiceImpl<WalletMapper, WalletEntity> i
         Integer status = payInfo.getStatus();
         // 只有支付成功的状态才能退款
         Assert.isTrue(OrderConstant.SUCCESS.equals(status),"支付失败不能退款");
-        // 根据支付类型使用策略等设计模式获取对应的SDK封装的实现
+        // 根据支付类型使用策略等设计模式获取对应的SDK适配器的实现
         // 调用sdk进行退款,不做任何修改在回调接口修改
 
     }
