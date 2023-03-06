@@ -1,6 +1,7 @@
 package com.mall.pay.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mall.pay.dto.RefundDTO;
 import com.mall.pay.dto.WalletDTO;
 import com.mall.pay.entity.WalletEntity;
 import com.mall.pay.vo.WalletRecordsVo;
@@ -22,9 +23,9 @@ public interface WalletService extends IService<WalletEntity> {
 
     /**
      * 退
-     * @param tradeNo 支付id
+     * @param refundDTO
      */
-    void refund(String tradeNo) throws NoPermissionException;
+    void refund(RefundDTO refundDTO) throws NoPermissionException;
 
     /**
      * 查询余额
@@ -39,12 +40,6 @@ public interface WalletService extends IService<WalletEntity> {
      */
     List<WalletRecordsVo> balanceDetail();
 
-    /**
-     * 回调监听
-     * @param tradeNo
-     * @return
-     */
-    String callbackRefund(String tradeNo);
 
     /**
      *

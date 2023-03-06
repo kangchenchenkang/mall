@@ -19,12 +19,20 @@ public class WalletRecordsEntity {
     @TableId
     private Long id;
     private Long userId;
+    /**
+     * 订单编号
+     */
+    private Long orderSn;
+    /**
+     * 流水号
+     */
+    private String tradeNo;
     private BigDecimal amount;
     /**
      * 充值类型{@link com.mall.pay.constant.PaymentConstant}
      * 支付宝充值，微信充值等
      */
-    private Integer type;
+    private Integer payType;
     /**
      * 消费类型{@link com.mall.pay.constant.ConsumerConstant}
      */

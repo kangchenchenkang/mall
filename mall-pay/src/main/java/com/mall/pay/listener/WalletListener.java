@@ -35,17 +35,5 @@ public class WalletListener {
         return  walletService.callbackRecharge(walletDTO);
     }
 
-    /**
-     * 回调退款成功
-     * @return
-     */
-    @PostMapping("recharge")
-    public String refund(){
-        // 支付宝微信等会进行最大努力通知,进行幂等性判断查询是否有退款记录
-        // 进行非对称加密验签
-        // 退款成功修改钱包
 
-        // 返回处理微信支付通知成功
-        return  walletService.callbackRefund("tradeNo等信息");
-    }
 }

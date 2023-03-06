@@ -18,13 +18,17 @@ public enum ConsumerConstant {
      */
     REFUND(2),
     /**
+     * 部分退款
+     */
+    PARTIAL_REFUND(3),
+    /**
      * 支付
      */
-    PAY(3),
+    PAY(4),
     /**
      * 其他
      */
-    OTHER(4);
+    OTHER(5);
 
     private int type;
 

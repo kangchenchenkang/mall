@@ -1,5 +1,6 @@
 package com.mall.pay.controller;
 
+import com.mall.pay.dto.RefundDTO;
 import com.mall.pay.dto.WalletDTO;
 import com.mall.pay.service.WalletService;
 import com.mall.pay.util.R;
@@ -21,11 +22,12 @@ public class WalletController {
 
 
     /**
-     * 查询余额
+     * 查金额变动
      * @return
      */
     @GetMapping("details")
     public R detail(){
+        // 省略分页
         return R.ok(walletService.balanceDetail());
     }
 
@@ -42,8 +44,8 @@ public class WalletController {
      * @return
      */
     @PutMapping("refund")
-    public R refund(@RequestBody String tradeNo) throws NoPermissionException {
-        walletService.refund(tradeNo);
+    public R refund(@RequestBody RefundDTO refundDTO) throws NoPermissionException {
+        walletService.refund(refundDTO);
         return R.ok();
     }
     /**
