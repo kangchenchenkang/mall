@@ -21,7 +21,6 @@ public class OrderDTO {
      */
     private Integer payType;
 
-    private
     public class OrderItemDTO{
 
     }
