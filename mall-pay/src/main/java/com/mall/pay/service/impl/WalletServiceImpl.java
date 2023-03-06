@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.naming.NoPermissionException;
 import java.util.List;
-import java.util.concurrent.locks.LockSupport;
 
 /**
  * @author ckstart
@@ -105,6 +104,7 @@ public class WalletServiceImpl extends ServiceImpl<WalletMapper, WalletEntity> i
 
     @Override
     public List<WalletRecordsVo> balanceDetail() {
+        // 省略分页
         return walletRecordsService.getRecords();
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

@@ -22,7 +22,11 @@ public class WalletController {
 
 
     /**
+<<<<<<< HEAD
      * 查金额变动
+=======
+     * 查询记录
+>>>>>>> bd6f1045a49fa41603b9557e9f2add842fa5fdad
      * @return
      */
     @GetMapping("details")
